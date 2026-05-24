@@ -229,26 +229,39 @@
     color:var(--creme); opacity:.85; max-width:38ch;
   }
 
-  /* Footer tagline */
-  .tagline{
-    position:absolute; bottom:38px; left:50%; transform:translateX(-50%);
-    font-family:'Plus Jakarta Sans', sans-serif; font-weight:500; font-style:italic;
-    font-size:13px; letter-spacing:.01em;
-    color:var(--creme); opacity:.55;
-    white-space:nowrap;
+  /* Desktop: newsletter collapsed to a button, expands on hover */
+  @media (min-width:561px){
+    .form{
+      width:auto;
+      transition:padding .4s cubic-bezier(.34,1.12,.5,1), gap .4s ease,
+                 background .32s ease, border-color .32s ease, box-shadow .32s ease;
+    }
+    .form input{
+      flex:0 0 auto; width:250px; overflow:hidden;
+      transition:width .4s cubic-bezier(.34,1.12,.5,1), opacity .3s ease, padding .4s ease;
+    }
+    .form:not(.expanded){
+      background:transparent; border-color:transparent; box-shadow:none;
+      padding:0; gap:0;
+      backdrop-filter:none; -webkit-backdrop-filter:none;
+    }
+    .form:not(.expanded) input{
+      width:0; padding:0; opacity:0; pointer-events:none;
+    }
   }
-  body.ready .tagline{ animation:fadeUp .9s ease .9s forwards; opacity:0; }
 
   @media (max-width:560px){
-    .brand{ margin-bottom:34px; }
-    .eyebrow{ font-size:10.5px; letter-spacing:.24em; }
+    body{ overflow-y:auto; overflow-x:hidden; }
+    .hero{ justify-content:flex-start; height:auto; min-height:100%; padding-top:62px; padding-bottom:54px; }
+    .brand{ margin-bottom:30px; }
+    .eyebrow{ font-size:10.5px; letter-spacing:.24em; margin-bottom:22px; }
     .eyebrow::before, .eyebrow::after{ width:18px; }
-    .form{ flex-direction:column; gap:10px; padding:10px; border-radius:22px; width:min(420px,92vw); }
+    .sub{ margin-top:20px; }
+    .form{ flex-direction:column; gap:10px; padding:10px; border-radius:22px; width:min(420px,92vw); margin-top:30px; }
     .form input{ width:100%; text-align:center; padding:8px 0; }
     .form button{ width:100%; justify-content:center; padding:15px; }
-    .reassure{ text-align:center; }
+    .reassure{ flex-wrap:wrap; justify-content:center; text-align:center; row-gap:4px; }
     .watermark{ width:420px; height:394px; bottom:-14%; }
-    .tagline{ font-size:11.5px; bottom:26px; }
   }
 </style>
 </head>
@@ -325,11 +338,10 @@
       <h3>Bienvenue sur la liste.</h3>
       <p>Merci de votre confiance. Nous reviendrons vers vous au bon moment, in cha Allah.</p>
     </div>
-
-    <div class="tagline">Sept jalons, de l'intention au foyer.</div>
   </main>
 
 <script>
+  // Reveal hero after loader
   window.addEventListener('load', function(){
     setTimeout(function(){
       document.getElementById('loader').classList.add('hidden');
@@ -337,6 +349,7 @@
     }, 3100);
   });
 
+  // Parallax on orbs
   var orbs = document.querySelectorAll('.orb');
   window.addEventListener('mousemove', function(e){
     var x = (e.clientX / window.innerWidth - 0.5);
@@ -348,8 +361,25 @@
     });
   });
 
+  // Form submit
   var form = document.getElementById('waitForm');
   var success = document.getElementById('success');
+
+  // Desktop: newsletter collapsed to a button, expands on hover (3s linger)
+  var collapseTimer;
+  function deskMode(){ return window.matchMedia('(min-width:561px)').matches; }
+  function expandForm(){ clearTimeout(collapseTimer); form.classList.add('expanded'); }
+  function scheduleCollapse(){
+    clearTimeout(collapseTimer);
+    collapseTimer = setTimeout(function(){
+      if(!form.matches(':focus-within')) form.classList.remove('expanded');
+    }, 3000);
+  }
+  form.addEventListener('mouseenter', function(){ if(deskMode()) expandForm(); });
+  form.addEventListener('mouseleave', function(){ if(deskMode()) scheduleCollapse(); });
+  form.addEventListener('focusin',  function(){ if(deskMode()) expandForm(); });
+  form.addEventListener('focusout', function(){ if(deskMode()) scheduleCollapse(); });
+
   form.addEventListener('submit', function(e){
     e.preventDefault();
     var email = document.getElementById('email').value.trim();
