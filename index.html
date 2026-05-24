@@ -88,17 +88,6 @@
     font-size:24px; letter-spacing:-.02em; color:var(--creme);
     opacity:0; animation:fadeUp .7s ease 1.5s forwards;
   }
-  .loader-bar{
-    width:120px; height:3px; border-radius:99px;
-    background:rgba(251,245,238,.25); overflow:hidden;
-    opacity:0; animation:fadeUp .5s ease 1.7s forwards;
-  }
-  .loader-bar i{
-    display:block; height:100%; width:0; border-radius:99px;
-    background:var(--creme);
-    animation:fill 1.5s ease 1.75s forwards;
-  }
-  @keyframes fill{ to{ width:100%; } }
 
   /* ============ HERO ============ */
   .hero{
@@ -289,7 +278,6 @@
       <path class="arch two" d="M56 32 C 56 46, 48 54, 36 54 L 36 22 C 36 16, 40 12, 46 12 C 52 12, 56 16, 56 22 Z"/>
     </svg>
     <div class="loader-word">Zawjia</div>
-    <div class="loader-bar"><i></i></div>
   </div>
 
   <!-- ===== Hero ===== -->
