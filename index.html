@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Zawjia — Liste d'attente</title>
+<meta name="description" content="Le mariage dans la communauté musulmane vous intéresse ? Rejoignez la liste d'attente Zawjia." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Nunito+Sans:wght@400;600;700&family=DM+Sans:wght@500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --framboise:#E52B59;
+    --ambre:#FAA638;
+    --rose:#E06183;
+    --bordeaux:#8A1F3D;
+    --encre:#2A0B15;
+    --creme:#FBF5EE;
+  }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  html,body{ height:100%; }
+  body{
+    font-family:'Nunito Sans', system-ui, sans-serif;
+    background:var(--encre);
+    color:var(--creme);
+    overflow:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ============ ANIMATED GRADIENT BACKGROUND ============ */
+  .stage{
+    position:fixed; inset:0;
+    overflow:hidden;
+  }
+  .gradient{
+    position:absolute; inset:-25%;
+    background:linear-gradient(150deg, #6E1731 0%, #8A1F3D 26%, #E52B59 58%, #FAA638 100%);
+    background-size:200% 200%;
+    animation:drift 22s ease-in-out infinite;
+  }
+  @keyframes drift{
+    0%,100%{ background-position:0% 0%; }
+    50%{ background-position:100% 100%; }
+  }
+  /* Glowing orbs */
+  .orb{
+    position:absolute; border-radius:50%;
+    filter:blur(90px); opacity:.55; pointer-events:none;
+  }
+  .orb-1{ width:520px; height:520px; background:#FAA638; top:-160px; right:-120px; animation:float1 16s ease-in-out infinite; }
+  .orb-2{ width:460px; height:460px; background:#E06183; bottom:-180px; left:-140px; animation:float2 19s ease-in-out infinite; }
+  .orb-3{ width:340px; height:340px; background:#8A1F3D; top:38%; left:46%; opacity:.4; animation:float3 24s ease-in-out infinite; }
+  @keyframes float1{ 0%,100%{ transform:translate(0,0); } 50%{ transform:translate(-60px,70px); } }
+  @keyframes float2{ 0%,100%{ transform:translate(0,0); } 50%{ transform:translate(80px,-50px); } }
+  @keyframes float3{ 0%,100%{ transform:translate(0,0) scale(1); } 50%{ transform:translate(-40px,-60px) scale(1.15); } }
+  /* Grain */
+  .grain{
+    position:absolute; inset:0; opacity:.05; pointer-events:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  /* Giant faint watermark logo */
+  .watermark{
+    position:absolute; right:-6%; bottom:-22%;
+    width:680px; height:638px; opacity:.06; pointer-events:none;
+    transform:rotate(-8deg);
+  }
+
+  /* ============ LOADER ============ */
+  .loader{
+    position:fixed; inset:0; z-index:50;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:26px;
+    background:linear-gradient(160deg, #8A1F3D 0%, #E52B59 55%, #FAA638 100%);
+    transition:opacity .8s ease, visibility .8s ease;
+  }
+  .loader.hidden{ opacity:0; visibility:hidden; }
+  .loader svg{ width:96px; height:90px; }
+  .loader .arch{
+    fill:none; stroke:var(--creme); stroke-width:4.5;
+    stroke-linejoin:round; stroke-linecap:round;
+    stroke-dasharray:240; stroke-dashoffset:240;
+    animation:draw 1.7s cubic-bezier(.65,0,.35,1) forwards;
+  }
+  .loader .arch.two{ animation-delay:.28s; }
+  @keyframes draw{ to{ stroke-dashoffset:0; } }
+  .loader-word{
+    font-family:'Plus Jakarta Sans', sans-serif; font-weight:800;
+    font-size:24px; letter-spacing:-.02em; color:var(--creme);
+    opacity:0; animation:fadeUp .7s ease 1.5s forwards;
+  }
+  .loader-bar{
+    width:120px; height:3px; border-radius:99px;
+    background:rgba(251,245,238,.25); overflow:hidden;
+    opacity:0; animation:fadeUp .5s ease 1.7s forwards;
+  }
+  .loader-bar i{
+    display:block; height:100%; width:0; border-radius:99px;
+    background:var(--creme);
+    animation:fill 1.5s ease 1.75s forwards;
+  }
+  @keyframes fill{ to{ width:100%; } }
+
+  /* ============ HERO ============ */
+  .hero{
+    position:relative; z-index:10;
+    height:100%; width:100%;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center;
+    padding:48px 24px;
+  }
+  .reveal{ opacity:0; transform:translateY(26px); }
+  body.ready .reveal{
+    animation:fadeUp .9s cubic-bezier(.25,.6,.3,1) forwards;
+  }
+  body.ready .d1{ animation-delay:.05s; }
+  body.ready .d2{ animation-delay:.18s; }
+  body.ready .d3{ animation-delay:.32s; }
+  body.ready .d4{ animation-delay:.46s; }
+  body.ready .d5{ animation-delay:.60s; }
+  body.ready .d6{ animation-delay:.74s; }
+  @keyframes fadeUp{ to{ opacity:1; transform:translateY(0); } }
+
+  /* Brand lockup */
+  .brand{
+    display:flex; align-items:center; gap:13px;
+    margin-bottom:46px;
+  }
+  .brand svg{ width:42px; height:39px; }
+  .brand .mark{ fill:none; stroke:var(--creme); stroke-width:4.5; stroke-linejoin:round; stroke-linecap:round; }
+  .brand .word{
+    font-family:'Plus Jakarta Sans', sans-serif; font-weight:800;
+    font-size:22px; letter-spacing:-.02em; color:var(--creme);
+  }
+
+  .eyebrow{
+    font-family:'DM Sans', sans-serif; font-weight:700;
+    font-size:12px; letter-spacing:.32em; text-transform:uppercase;
+    color:var(--creme); opacity:.78;
+    display:flex; align-items:center; gap:12px;
+    margin-bottom:26px;
+  }
+  .eyebrow::before, .eyebrow::after{
+    content:""; width:30px; height:1px; background:rgba(251,245,238,.45);
+  }
+
+  h1{
+    font-family:'Plus Jakarta Sans', sans-serif; font-weight:800;
+    font-size:clamp(34px, 6vw, 68px); line-height:1.06;
+    letter-spacing:-.025em; color:var(--creme);
+    max-width:16ch;
+  }
+  h1 .soft{ display:block; color:#FFE9C9; }
+
+  .sub{
+    font-family:'Nunito Sans', sans-serif; font-weight:400;
+    font-size:clamp(15px, 1.4vw, 18px); line-height:1.6;
+    color:var(--creme); opacity:.9;
+    max-width:52ch;
+    margin-top:24px;
+  }
+
+  /* Form */
+  .form{
+    margin-top:40px;
+    display:flex; align-items:center; gap:8px;
+    background:rgba(251,245,238,.12);
+    border:1.5px solid rgba(251,245,238,.32);
+    border-radius:99px;
+    padding:7px 7px 7px 24px;
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    width:min(520px, 92vw);
+    transition:border-color .3s ease, box-shadow .3s ease, background .3s ease;
+  }
+  .form:focus-within{
+    border-color:var(--creme);
+    background:rgba(251,245,238,.18);
+    box-shadow:0 0 0 6px rgba(251,245,238,.10), 0 18px 50px rgba(42,11,21,.4);
+  }
+  .form input{
+    flex:1; background:none; border:none; outline:none;
+    font-family:'Nunito Sans', sans-serif; font-size:15px; font-weight:600;
+    color:var(--creme);
+  }
+  .form input::placeholder{ color:rgba(251,245,238,.62); font-weight:400; }
+  .form button{
+    flex-shrink:0; cursor:pointer;
+    font-family:'DM Sans', sans-serif; font-weight:700; font-size:14px;
+    color:var(--bordeaux); background:var(--creme);
+    border:none; border-radius:99px;
+    padding:14px 26px;
+    display:flex; align-items:center; gap:8px;
+    transition:transform .25s cubic-bezier(.34,1.56,.64,1), box-shadow .25s ease, background .25s ease;
+  }
+  .form button:hover{
+    transform:translateY(-2px);
+    box-shadow:0 14px 30px rgba(42,11,21,.45);
+  }
+  .form button svg{ width:15px; height:15px; transition:transform .25s ease; }
+  .form button:hover svg{ transform:translateX(3px); }
+
+  .reassure{
+    margin-top:18px;
+    font-family:'DM Sans', sans-serif; font-size:12.5px; font-weight:500;
+    color:var(--creme); opacity:.62;
+    display:flex; align-items:center; gap:8px;
+  }
+  .reassure .dot{ width:3px; height:3px; border-radius:50%; background:currentColor; }
+
+  /* Success state */
+  .success{
+    display:none;
+    margin-top:40px;
+    flex-direction:column; align-items:center; gap:14px;
+  }
+  .success.show{ display:flex; animation:fadeUp .6s ease forwards; }
+  .success .check{
+    width:58px; height:58px; border-radius:50%;
+    background:var(--creme);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .success .check svg{ width:26px; height:26px; }
+  .success h3{
+    font-family:'Plus Jakarta Sans', sans-serif; font-weight:700; font-size:22px;
+    color:var(--creme);
+  }
+  .success p{
+    font-family:'Nunito Sans', sans-serif; font-size:14px;
+    color:var(--creme); opacity:.85; max-width:38ch;
+  }
+
+  /* Footer tagline */
+  .tagline{
+    position:absolute; bottom:38px; left:50%; transform:translateX(-50%);
+    font-family:'Plus Jakarta Sans', sans-serif; font-weight:500; font-style:italic;
+    font-size:13px; letter-spacing:.01em;
+    color:var(--creme); opacity:.55;
+    white-space:nowrap;
+  }
+  body.ready .tagline{ animation:fadeUp .9s ease .9s forwards; opacity:0; }
+
+  @media (max-width:560px){
+    .brand{ margin-bottom:34px; }
+    .eyebrow{ font-size:10.5px; letter-spacing:.24em; }
+    .eyebrow::before, .eyebrow::after{ width:18px; }
+    .form{ flex-direction:column; gap:10px; padding:10px; border-radius:22px; width:min(420px,92vw); }
+    .form input{ width:100%; text-align:center; padding:8px 0; }
+    .form button{ width:100%; justify-content:center; padding:15px; }
+    .reassure{ text-align:center; }
+    .watermark{ width:420px; height:394px; bottom:-14%; }
+    .tagline{ font-size:11.5px; bottom:26px; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- ===== Animated background ===== -->
+  <div class="stage" aria-hidden="true">
+    <div class="gradient"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <svg class="watermark" viewBox="0 0 64 60" xmlns="http://www.w3.org/2000/svg">
+      <g fill="none" stroke="#FBF5EE" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
+        <path d="M8 32 C 8 46, 16 54, 28 54 L 28 22 C 28 16, 24 12, 18 12 C 12 12, 8 16, 8 22 Z"/>
+        <path d="M56 32 C 56 46, 48 54, 36 54 L 36 22 C 36 16, 40 12, 46 12 C 52 12, 56 16, 56 22 Z"/>
+      </g>
+    </svg>
+    <div class="grain"></div>
+  </div>
+
+  <!-- ===== Loader ===== -->
+  <div class="loader" id="loader">
+    <svg viewBox="0 0 64 60" xmlns="http://www.w3.org/2000/svg">
+      <path class="arch one" d="M8 32 C 8 46, 16 54, 28 54 L 28 22 C 28 16, 24 12, 18 12 C 12 12, 8 16, 8 22 Z"/>
+      <path class="arch two" d="M56 32 C 56 46, 48 54, 36 54 L 36 22 C 36 16, 40 12, 46 12 C 52 12, 56 16, 56 22 Z"/>
+    </svg>
+    <div class="loader-word">Zawjia</div>
+    <div class="loader-bar"><i></i></div>
+  </div>
+
+  <!-- ===== Hero ===== -->
+  <main class="hero">
+    <div class="brand reveal d1">
+      <svg viewBox="0 0 64 60" xmlns="http://www.w3.org/2000/svg">
+        <path class="mark" d="M8 32 C 8 46, 16 54, 28 54 L 28 22 C 28 16, 24 12, 18 12 C 12 12, 8 16, 8 22 Z"/>
+        <path class="mark" d="M56 32 C 56 46, 48 54, 36 54 L 36 22 C 36 16, 40 12, 46 12 C 52 12, 56 16, 56 22 Z"/>
+      </svg>
+      <span class="word">Zawjia</span>
+    </div>
+
+    <div class="eyebrow reveal d2">Liste d'attente privée</div>
+
+    <h1 class="reveal d3">
+      Le mariage dans la communauté musulmane
+      <span class="soft">vous tient à cœur&nbsp;?</span>
+    </h1>
+
+    <p class="sub reveal d4">
+      Rejoignez la liste d'attente Zawjia. Une démarche pensée pour vous
+      accompagner vers un foyer fondé sur l'intention, la sincérité et les
+      vraies valeurs.
+    </p>
+
+    <form class="form reveal d5" id="waitForm" novalidate>
+      <input type="email" id="email" placeholder="Votre adresse email" required aria-label="Votre adresse email" />
+      <button type="submit">
+        Rejoindre la liste
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+        </svg>
+      </button>
+    </form>
+
+    <div class="reassure reveal d6">
+      Aucun spam<span class="dot"></span>Désinscription en un clic<span class="dot"></span>Vos données restent confidentielles
+    </div>
+
+    <div class="success" id="success">
+      <div class="check">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#1B9E77" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </div>
+      <h3>Bienvenue sur la liste.</h3>
+      <p>Merci de votre confiance. Nous reviendrons vers vous au bon moment, in cha Allah.</p>
+    </div>
+
+    <div class="tagline">Sept jalons, de l'intention au foyer.</div>
+  </main>
+
+<script>
+  window.addEventListener('load', function(){
+    setTimeout(function(){
+      document.getElementById('loader').classList.add('hidden');
+      document.body.classList.add('ready');
+    }, 3100);
+  });
+
+  var orbs = document.querySelectorAll('.orb');
+  window.addEventListener('mousemove', function(e){
+    var x = (e.clientX / window.innerWidth - 0.5);
+    var y = (e.clientY / window.innerHeight - 0.5);
+    orbs.forEach(function(orb, i){
+      var depth = (i + 1) * 14;
+      orb.style.marginLeft = (x * depth) + 'px';
+      orb.style.marginTop = (y * depth) + 'px';
+    });
+  });
+
+  var form = document.getElementById('waitForm');
+  var success = document.getElementById('success');
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var email = document.getElementById('email').value.trim();
+    if(!email || email.indexOf('@') < 1){
+      document.getElementById('email').focus();
+      return;
+    }
+    form.style.transition = 'opacity .4s ease, transform .4s ease';
+    form.style.opacity = '0';
+    form.style.transform = 'translateY(-10px)';
+    var reassure = document.querySelector('.reassure');
+    reassure.style.transition = 'opacity .3s ease';
+    reassure.style.opacity = '0';
+    setTimeout(function(){
+      form.style.display = 'none';
+      reassure.style.display = 'none';
+      success.classList.add('show');
+    }, 400);
+  });
+</script>
+</body>
+</html>
