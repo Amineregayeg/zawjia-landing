@@ -395,9 +395,8 @@
   form.addEventListener('focusout', function(){ if(deskMode()) scheduleCollapse(); });
 
   // ====== Waitlist API ======
-  // Set this to the deployed endpoint URL to enable real signups.
-  // While empty (''), the form just simulates success (useful pre-deploy).
-  var WAITLIST_API_URL = '';
+  // Live endpoint: VPS Zawjia (72.60.88.215) · Caddy + Node/Express · Brevo + Resend.
+  var WAITLIST_API_URL = 'https://waitlist.zawjia.com/waitlist';
 
   var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
   var errorEl = document.getElementById('formError');
